@@ -1,5 +1,5 @@
 from .base import BaseModel
-from sqlalchemy import Column, String, Integer, LargeBinary, ForeignKey
+from sqlalchemy import Column, String, Integer, LargeBinary, ForeignKey, Text
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy import Enum
@@ -24,6 +24,7 @@ class Document(BaseModel):
     file_size = Column(Integer)
     file_path = Column(String(255)) # in the future will point to s3
     file_type = Column(Enum(FileType), nullable=False, default=FileType.NOT_SPECIFIED)
+    extracted_text = Column(Text, nullable=True)
 
     # python relationships
     user = relationship("User", back_populates="documents")

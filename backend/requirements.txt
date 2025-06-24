@@ -11,7 +11,6 @@ psycopg2-binary==2.9.9
 # Authentication
 python-jose[cryptography]==3.3.0
 passlib[bcrypt]==1.7.4
-python-multipart==0.0.6
 
 # Background Tasks
 celery==5.3.4
@@ -24,6 +23,10 @@ pytesseract==0.3.10
 pdf2image==1.16.3
 Pillow==11.2.1
 
+# AI/LLM Integration
+openai==1.40.0
+httpx==0.25.2
+
 # Environment & Configuration
 python-dotenv==1.0.0
 pydantic==2.5.0
@@ -34,3 +37,8 @@ pytest==7.4.3
 pytest-asyncio==0.21.1
 black==23.11.0
 
+#LangChain Framework
+langchain==0.2.16
+langchain-openai==0.1.25
+langchain-community==0.2.16
+langchain-core==0.2.40

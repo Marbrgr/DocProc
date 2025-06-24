@@ -4,7 +4,7 @@ from pydantic import BaseModel, EmailStr
 from app.database import get_db
 from app.models import User
 from app.utils.auth import hash_password, verify_password
-from app.utils.jwt import create_access_token
+from app.utils.jwt import create_access_token, get_current_user
 
 
 router = APIRouter()
@@ -71,4 +71,14 @@ async def login(login_data: UserLogin, db: Session = Depends(get_db)):
         "username": user.username
     }
 
+@router.get("/me")
+async def get_current_user(current_user: User = Depends(get_current_user)):
+    return {
+        "user_id": str(current_user.id),
+        "username": current_user.username,
+        "email": current_user.email,
+        "documents_processed": current_user.documents_processed,
+        "is_admin": current_user.is_admin,
+        "created_at": current_user.created_at,
+    }
 

@@ -106,6 +106,11 @@ async def list_documents(
             "file_size": doc.file_size,
             "file_type": doc.file_type,
             "created_at": doc.created_at,
+            "ai_document_type": doc.ai_document_type.value if doc.ai_document_type else None,
+            "ai_confidence": doc.ai_confidence,
+            "ai_key_information": doc.ai_key_information,
+            "ai_analysis_method": doc.ai_analysis_method,
+            "ai_model_used": doc.ai_model_used,
         })
     return document_list
 
@@ -126,6 +131,11 @@ async def get_document(
         "file_type": document.file_type,
         "created_at": document.created_at,
         "extracted_text": document.extracted_text,
+        "ai_document_type": document.ai_document_type.value if document.ai_document_type else None,
+        "ai_confidence": document.ai_confidence,
+        "ai_key_information": document.ai_key_information,
+        "ai_analysis_method": document.ai_analysis_method,
+        "ai_model_used": document.ai_model_used,
     }
 
 @router.get("/{document_id}/download")

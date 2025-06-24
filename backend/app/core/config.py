@@ -36,6 +36,8 @@ class Settings(BaseSettings):
     OPENAI_MAX_TOKENS: int = 1000
     OPENAI_TEMPERATURE: float = 0.1
 
+    WORKFLOW_ENGINE: str = "langchain" # Options: langchain, openai_direct, llamaindex, haystack
+
     class Config:
         env_file = ".env"
         env_file_encoding = 'utf-8'

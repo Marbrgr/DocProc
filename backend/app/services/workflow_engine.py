@@ -2,15 +2,15 @@ from abc import ABC, abstractmethod
 from typing import Dict, Any, List, Optional
 from enum import Enum
 
-class WorkflowengineType(Enum):
+class WorkflowEngineType(Enum):
     LANGCHAIN = "langchain"
     LLAMAINDEX = "llamaindex"
     HAYSTACK = "haystack"
     OPENAI_DIRECT = "openai_direct"
 
-class Workflowengine(ABC):
+class WorkflowEngine(ABC):
     
-    @abstract method
+    @abstractmethod
     def initialize(self) -> bool:
         pass
 
@@ -23,7 +23,7 @@ class Workflowengine(ABC):
         pass
     
     @abstractmethod
-    def answer_question(self, question: str, context: str) -> dict[str, Any]:
+    def answer_question(self, question: str, context: str) -> Dict[str, Any]:
         pass
     
     @abstractmethod
@@ -45,11 +45,11 @@ class WorkflowEngineFactory:
     _engines = {}
 
     @classmethod
-    def register_engine(cls, engine_type: WorkFlowEngineType, engine_class):
+    def register_engine(cls, engine_type: WorkflowEngineType, engine_class):
         cls._engines[engine_type] = engine_class
     
     @classmethod
-    def create_engine(cls, engine_type: WorkflowengineType, **kwargs) -> Workflowengine:
+    def create_engine(cls, engine_type: WorkflowEngineType, **kwargs) -> WorkflowEngine:
         if engine_type not in cls._engines:
             raise ValueError(f"engine type {engine_type} not registered")
         

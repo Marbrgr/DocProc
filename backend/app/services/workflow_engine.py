@@ -19,11 +19,15 @@ class WorkflowEngine(ABC):
         pass
 
     @abstractmethod
-    def search_documents(self, query: str, documents: List[str]) -> List[Dict[str, Any]]:
+    def search_documents(self, query: str, user_id: str, documents: List[str]) -> List[Dict[str, Any]]:
         pass
     
     @abstractmethod
-    def answer_question(self, question: str, context: str) -> Dict[str, Any]:
+    def answer_question(self, question: str, user_id: str, context: str) -> Dict[str, Any]:
+        pass
+
+    @abstractmethod
+    def add_document_to_vectorstore(self, doc_id: str, text: str, user_id: str) -> bool:
         pass
     
     @abstractmethod

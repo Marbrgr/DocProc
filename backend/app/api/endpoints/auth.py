@@ -72,12 +72,21 @@ async def login(login_data: UserLogin, db: Session = Depends(get_db)):
     }
 
 @router.get("/me")
-async def get_current_user(current_user: User = Depends(get_current_user)):
+async def get_current_user_info(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    # 🆕 NEW: Calculate documents processed dynamically to ensure accuracy
+    from app.models import Document
+    documents_count = db.query(Document).filter(Document.user_id == current_user.id).count()
+    
+    # Update the stored count to keep it in sync
+    if current_user.documents_processed != documents_count:
+        current_user.documents_processed = documents_count
+        db.commit()
+    
     return {
         "user_id": str(current_user.id),
         "username": current_user.username,
         "email": current_user.email,
-        "documents_processed": current_user.documents_processed,
+        "documents_processed": documents_count,
         "is_admin": current_user.is_admin,
         "created_at": current_user.created_at,
     }

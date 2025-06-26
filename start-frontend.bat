@@ -1,0 +1,6 @@
+@echo off
+echo Starting DocuMind AI Frontend...
+cd /d "%~dp0frontend"
+echo Starting Vite development server...
+npm run dev
+pause 

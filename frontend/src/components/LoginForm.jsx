@@ -33,29 +33,34 @@ function LoginForm({ onLoginSuccess}) {
     }
 
     return (
-        <div>
-            <h1>Login</h1>
-            {error && <p style={{color: 'red'}}>{error}</p>}
+        <div className="login-form">
+            <h1>DocuMind AI</h1>
+            {error && <div className="login-error">{error}</div>}
             <form onSubmit={handleSubmit}>
-                <div>
+                <div className="form-group">
+                    <label htmlFor="username">Username</label>
                     <input
+                        id="username"
                         type="text"
-                        placeholder="Username"
+                        placeholder="Enter your username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
+                        required
                     />
                 </div>
-                <div>
+                <div className="form-group">
+                    <label htmlFor="password">Password</label>
                     <input
+                        id="password"
                         type="password"
-                        placeholder="Password"
+                        placeholder="Enter your password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required
                     />
                 </div>
-                <br></br>
-                <button type="submit" disabled={isLoading}>
-                    {isLoading ? 'Logging in...' : 'Login'}
+                <button type="submit" disabled={isLoading} className="login-btn">
+                    {isLoading ? 'Signing in...' : 'Sign In'}
                 </button>
             </form>
         </div>

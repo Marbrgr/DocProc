@@ -28,7 +28,15 @@ const DocumentModal = ({ document, isOpen, onClose, onDownload }) => {
       return (
         <div className="ai-analysis">
           <h3>🤖 AI Analysis</h3>
-          <p className="no-analysis">No AI analysis available for this document.</p>
+          <div className="analysis-loading">
+            <div className="loading-spinner"></div>
+            <p className="processing-text">
+              {document.extracted_text ? 
+                'AI analysis in progress... This may take a few moments.' : 
+                'Document processing in progress... This may take a few moments.'
+              }
+            </p>
+          </div>
         </div>
       )
     }
@@ -50,12 +58,24 @@ const DocumentModal = ({ document, isOpen, onClose, onDownload }) => {
           <div className="key-information">
             <h4>📋 Extracted Information</h4>
             <div className="info-grid">
-              {Object.entries(document.ai_key_information).map(([key, value]) => (
-                <div key={key} className="info-item">
-                  <span className="info-label">{key.replace(/_/g, ' ').toUpperCase()}:</span>
-                  <span className="info-value">{value || 'Not found'}</span>
-                </div>
-              ))}
+              {Object.entries(document.ai_key_information).map(([key, value]) => {
+                // Handle different value types for better display
+                let displayValue = value
+                if (typeof value === 'boolean') {
+                  displayValue = value ? 'Yes' : 'No'
+                } else if (value === null || value === undefined || value === '') {
+                  displayValue = 'Not found'
+                } else {
+                  displayValue = String(value)
+                }
+                
+                return (
+                  <div key={key} className="info-item">
+                    <span className="info-label">{key.replace(/_/g, ' ').toUpperCase()}:</span>
+                    <span className="info-value">{displayValue}</span>
+                  </div>
+                )
+              })}
             </div>
           </div>
         )}

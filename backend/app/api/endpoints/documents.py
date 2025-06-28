@@ -208,6 +208,7 @@ async def cleanup_orphaned_vectors(
             try:
                 engine = WorkflowEngineFactory.get_engine(engine_type)
                 if not engine or not hasattr(engine, 'search_documents'):
+                    logger.info(f"⏭️ Skipping {engine_type.value}: engine not available or no search support")
                     continue
                 
                 # Get all documents in vector store for this user
@@ -241,7 +242,8 @@ async def cleanup_orphaned_vectors(
                     "engine": engine_type.value,
                     "total_vector_docs": len(all_results),
                     "orphaned_found": len(set(orphaned_docs)),
-                    "orphaned_removed": removed_count
+                    "orphaned_removed": removed_count,
+                    "success": True
                 })
                 
                 logger.info(f"🧹 Vector cleanup for {engine_type.value}: found {len(set(orphaned_docs))} orphaned, removed {removed_count}")
@@ -250,7 +252,8 @@ async def cleanup_orphaned_vectors(
                 logger.error(f"❌ Vector cleanup failed for {engine_type.value}: {str(engine_error)}")
                 cleanup_results.append({
                     "engine": engine_type.value,
-                    "error": str(engine_error)
+                    "error": str(engine_error),
+                    "success": False
                 })
         
         return {
@@ -344,6 +347,13 @@ async def delete_document(
                         "removed": removed
                     })
                     logger.info(f"🗑️ Vector cleanup for {engine_type.value}: {'✅' if removed else '❌'}")
+                else:
+                    # Skip engines that aren't available or don't support vector storage
+                    if engine is None:
+                        logger.info(f"⏭️ Skipping {engine_type.value}: engine not available")
+                    else:
+                        logger.info(f"⏭️ Skipping {engine_type.value}: no vector storage support")
+                    continue
             except Exception as vector_error:
                 logger.error(f"❌ Vector cleanup failed for {engine_type.value}: {str(vector_error)}")
                 vector_cleanup_results.append({

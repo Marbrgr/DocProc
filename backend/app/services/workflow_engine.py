@@ -47,6 +47,7 @@ class WorkflowEngine(ABC):
 class WorkflowEngineFactory:
 
     _engines = {}
+    _engine_instances = {}
 
     @classmethod
     def register_engine(cls, engine_type: WorkflowEngineType, engine_class):
@@ -58,6 +59,24 @@ class WorkflowEngineFactory:
             raise ValueError(f"engine type {engine_type} not registered")
         
         return cls._engines[engine_type](**kwargs)
+    
+    @classmethod
+    def get_engine(cls, engine_type: WorkflowEngineType) -> Optional[WorkflowEngine]:
+        """Get an engine instance, creating it if it doesn't exist"""
+        try:
+            if engine_type not in cls._engine_instances:
+                if engine_type not in cls._engines:
+                    return None
+                
+                engine_instance = cls._engines[engine_type]()
+                if engine_instance.initialize():
+                    cls._engine_instances[engine_type] = engine_instance
+                else:
+                    return None
+            
+            return cls._engine_instances[engine_type]
+        except Exception:
+            return None
     
     @classmethod
     def get_available_engines(cls) -> List[WorkflowEngineType]:

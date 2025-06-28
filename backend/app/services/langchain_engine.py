@@ -349,13 +349,24 @@ Return ONLY the JSON object, no additional text."""),
             
             chunks = text_splitter.split_text(text)
             
+            # Filter out meaningless chunks
+            meaningful_chunks = []
+            for chunk in chunks:
+                # Skip chunks that are mostly empty or contain only extraction failure messages
+                if self._is_meaningful_chunk(chunk):
+                    meaningful_chunks.append(chunk)
+            
+            if not meaningful_chunks:
+                logger.warning(f"No meaningful chunks found for document {doc_id}")
+                return False
+            
             documents = []
-            for i, chunk in enumerate(chunks):
+            for i, chunk in enumerate(meaningful_chunks):
                 doc_metadata = {
                     "doc_id": doc_id,
                     "chunk_id": f"{doc_id}_{i}",
                     "chunk_index": i,
-                    "total_chunks": len(chunks),
+                    "total_chunks": len(meaningful_chunks),
                     "engine": "langchain",
                     "user_id": user_id
                 }
@@ -367,12 +378,46 @@ Return ONLY the JSON object, no additional text."""),
             
             self.vectorstore.add_documents(documents)
             
-            logger.info(f"✅ LangChain added document {doc_id} ({len(chunks)} chunks)")
+            logger.info(f"✅ LangChain added document {doc_id} ({len(meaningful_chunks)} meaningful chunks out of {len(chunks)} total)")
             return True
             
         except Exception as e:
             logger.error(f"❌ LangChain failed to add document {doc_id}: {str(e)}")
             return False
+    
+    def _is_meaningful_chunk(self, chunk: str) -> bool:
+        """Check if a chunk contains meaningful content"""
+        if not chunk or len(chunk.strip()) < 20:
+            return False
+        
+        # Remove common extraction failure patterns
+        cleaned_chunk = chunk.lower()
+        
+        # Patterns that indicate empty/failed content
+        empty_patterns = [
+            "[no extractable text]",
+            "[error extracting text",
+            "--- page",
+            "pdf processing failed",
+            "ocr failed",
+            "error processing",
+            "unsupported file type"
+        ]
+        
+        # If chunk consists mostly of empty patterns, skip it
+        meaningful_content = chunk
+        for pattern in empty_patterns:
+            meaningful_content = meaningful_content.replace(pattern, "")
+        
+        # If after removing patterns, less than 50 characters remain, it's not meaningful
+        if len(meaningful_content.strip()) < 50:
+            return False
+        
+        # Additional check: if chunk is mostly repetitive page markers
+        if chunk.count("--- Page") > len(chunk) / 100:  # Too many page markers relative to content
+            return False
+        
+        return True
     
     def remove_document_from_vectorstore(self, doc_id: str, user_id: str) -> bool:
         """Remove document from LangChain vector store"""

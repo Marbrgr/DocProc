@@ -8,10 +8,19 @@ import pytesseract
 from pdf2image import convert_from_path
 from PIL import Image
 from app.services.llm_service import llm_service
+import platform
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-POPPLER_PATH = r"C:\Program Files\Poppler\poppler-24.08.0\Library\bin"
+
+# Configure paths based on operating system
+if platform.system() == "Windows":
+    # Windows paths
+    pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    POPPLER_PATH = r"C:\Program Files\Poppler\poppler-24.08.0\Library\bin"
+else:
+    # Linux/Docker paths - use system defaults
+    pytesseract.pytesseract.tesseract_cmd = "tesseract"  # Use system PATH
+    POPPLER_PATH = None  # Use system PATH
 
 @celery_app.task
 def process_document(document_id: str, user_id: str):
@@ -40,13 +49,20 @@ def process_document(document_id: str, user_id: str):
             # Method 1: Try pdf2image + OCR (best for scanned PDFs)
             try:
                 print("📄 Attempting PDF processing with pdf2image + OCR...")
-                poppler_bin = Path(POPPLER_PATH)
-                print(f"Poppler path exists: {poppler_bin.exists()}")
-                if poppler_bin.exists():
-                    executables = list(poppler_bin.glob("*.exe"))
-                    print(f"Found executables: {[exe.name for exe in executables]}")
                 
-                images = convert_from_path(str(file_path), poppler_path=POPPLER_PATH)
+                if POPPLER_PATH:
+                    # Windows - use specified path
+                    poppler_bin = Path(POPPLER_PATH)
+                    print(f"Poppler path exists: {poppler_bin.exists()}")
+                    if poppler_bin.exists():
+                        executables = list(poppler_bin.glob("*.exe"))
+                        print(f"Found executables: {[exe.name for exe in executables]}")
+                    
+                    images = convert_from_path(str(file_path), poppler_path=POPPLER_PATH)
+                else:
+                    # Linux/Docker - use system PATH
+                    print("Using system Poppler installation...")
+                    images = convert_from_path(str(file_path))
                 page_texts = []
 
                 for i, image in enumerate(images):

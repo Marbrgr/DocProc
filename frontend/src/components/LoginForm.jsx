@@ -32,6 +32,12 @@ function LoginForm({ onLoginSuccess}) {
         }
     }
 
+    const handleDemoLogin = () => {
+        setUsername('demo')
+        setPassword('demo123')
+        setError('')
+    }
+
     return (
         <div className="login-form">
             <h1>DocuMind AI</h1>
@@ -63,6 +69,12 @@ function LoginForm({ onLoginSuccess}) {
                     {isLoading ? 'Signing in...' : 'Sign In'}
                 </button>
             </form>
+            <div className="demo-section">
+                <p className="demo-text">Want to try it out?</p>
+                <button type="button" onClick={handleDemoLogin} className="demo-btn">
+                    🚀 Fill Demo Credentials
+                </button>
+            </div>
         </div>
     )
 

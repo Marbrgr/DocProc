@@ -9,15 +9,28 @@ app = FastAPI(
     version="1.0.0"
 )
 
+# Configure CORS origins based on environment
+cors_origins = [
+    "http://localhost:3000",  # Docker frontend (dev)
+    "http://localhost:5173",  # Vite dev server
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:5173"
+]
+
+# Add production origins
+if settings.ENVIRONMENT == "production":
+    cors_origins.extend([
+        "http://localhost:8080",  # Local production test
+        "https://localhost:8080", # Local production test with SSL
+        # Add your actual production domains here when deploying to AWS
+        # "https://yourdomain.com",
+        # "https://www.yourdomain.com"
+    ])
+
 # add in CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",  # Docker frontend
-        "http://localhost:5173",  # Vite dev server
-        "http://127.0.0.1:3000",
-        "http://127.0.0.1:5173"
-    ],
+    allow_origins=cors_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

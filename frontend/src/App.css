@@ -477,37 +477,7 @@ body {
   transform: none;
 }
 
-.demo-section {
-  margin-top: var(--space-6);
-  padding-top: var(--space-6);
-  border-top: 1px solid var(--gray-200);
-  text-align: center;
-}
 
-.demo-text {
-  color: var(--gray-600);
-  font-size: 0.875rem;
-  margin-bottom: var(--space-3);
-}
-
-.demo-btn {
-  background: linear-gradient(135deg, var(--success-color) 0%, #10b981 100%);
-  color: white;
-  border: none;
-  padding: var(--space-3) var(--space-5);
-  border-radius: var(--radius-lg);
-  cursor: pointer;
-  font-size: 0.875rem;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-md);
-}
-
-.demo-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-lg);
-  background: linear-gradient(135deg, #10b981 0%, var(--success-color) 100%);
-}
 
 .login-error {
   color: var(--danger-color);

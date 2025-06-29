@@ -1,4 +1,4 @@
-﻿# DocProc - an intelligent document processing system
+﻿# DocuMind - an intelligent document storage and processing system
  
 [![Python](https://img.shields.io/badge/Python-3.8%2B-blue)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green)](https://fastapi.tiangolo.com/)
